@@ -148,7 +148,8 @@ export default function Roster({league, scraped}){
           setOpacities([.3, .3, .3, .3, 1, 1, 1, 1])
         }
         else if(position == "B") {
-          getBenchPosition(name, index);
+          let position = getBenchPosition(name, index);
+          console.log(position);
         }
         startIndex = index;
         setTextToDisplay("Here");
@@ -200,8 +201,21 @@ export default function Roster({league, scraped}){
   
       var api = new cfb.PlayersApi();
       var player = await api.playerSearch(name);
-      // console.log(player[0].position);
-      selectPlayer(player[0].position, name, index);
+
+      var acceptable = ["QB", "RB", "WR", "TE"];
+      console.log(player);
+
+      var correct = 0;
+
+      for(var i = player.length - 1; i >= 0; i--){
+        if(acceptable.includes(player[i].position)) {
+          correct = i;
+          break;
+        }
+      }
+
+      console.log(player[correct].position);
+      selectPlayer(player[correct].position, name, index);
     }
 
     const PlayerCell = ({position, name, navigation, index}) => {
