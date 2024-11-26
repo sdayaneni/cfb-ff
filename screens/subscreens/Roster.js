@@ -20,6 +20,9 @@ const URL = "https://www.espn.com/college-football/teams";
 
 let scraped2 = false;
 
+let memberDoc = null;
+let userDocId = "";
+
 
 export default function Roster({league, scraped}){
     const isFocused = useIsFocused(); 
@@ -51,7 +54,7 @@ export default function Roster({league, scraped}){
 
     useEffect(() => {
 
-        console.log(scraped2);
+        // console.log(scraped2);
         if(isFocused){ 
             user = auth.currentUser;
             startFind();
@@ -61,7 +64,6 @@ export default function Roster({league, scraped}){
 
     // images not updating after rearranging
     const getPlayerImages = async (name, index) => {
-
       let toAddTo = collection(db, "leagues", "" + league, "drafted");
       const q = query(toAddTo);
       const querySnapshot = await getDocs(q);
@@ -71,7 +73,7 @@ export default function Roster({league, scraped}){
           let currentPlayers = playerImages;
           currentPlayers[index] = doc.data().imageURL;
           setPlayerImages(currentPlayers);
-          console.log(doc.data().imageURL)
+          // console.log(doc.data().imageURL)
           forceUpdate();
         }
       });
@@ -87,13 +89,16 @@ export default function Roster({league, scraped}){
         const q2 = query(collection(db, "leagues", "" + league, "members"));
         const querySnapshot2 = await getDocs(q2);
       
-        let userDocId = "";
-        querySnapshot2.forEach((doc2) => {
-            if(doc2.data().memberId == user.uid) {
-              userDocId = doc2.id
-              getRoster(doc2);
-            }
-        })
+        if(memberDoc == null) {
+          querySnapshot2.forEach((doc2) => {
+              if(doc2.data().memberId == user.uid) {
+                userDocId = doc2.id
+                memberDoc = doc2;
+              }
+          })
+      }
+      console.log(memberDoc);
+      getRoster(memberDoc);
     }
 
     async function getRoster(doc2) {
@@ -114,17 +119,46 @@ export default function Roster({league, scraped}){
         setB3([doc2.data().bench3[0], doc2.data().bench3[1]]);
         names[7] = doc2.data().bench3[0];
 
+        console.log(doc2.data().rb)
+
         // if(playerImages[0] == 'https://a.espncdn.com/combiner/i?img=/i/headshots/nophoto.png&w=200&h=146') {
-          getPlayerImages(qb, 0);
-          getPlayerImages(rb, 1);
-          getPlayerImages(wr1, 2);
-          getPlayerImages(wr2, 3);
-          getPlayerImages(te, 4);
-          getPlayerImages(b1[0], 5);
-          getPlayerImages(b2[0], 6);
-          getPlayerImages(b3[0], 7);
+        getPlayerImages(names[0], 0);
+        getPlayerImages(names[1], 1);
+        getPlayerImages(names[2], 2);
+        getPlayerImages(names[3], 3);
+        getPlayerImages(names[4], 4);
+        getPlayerImages(names[5], 5);
+        getPlayerImages(names[6], 6);
+        getPlayerImages(names[7], 7);
           // scraped2 = true;
         // }
+    }
+
+    function refresh() {
+      startIndex = 0;
+      endIndex = 0;
+      setDisabled([false, false, false, false, false, false, false, false]);
+      setOpacities([1, 1, 1, 1, 1, 1, 1,]);
+      setTextToDisplay("Move");
+
+      setQb(names[0]);
+      setRb(names[1]);
+      setWr1(names[2]);
+      setWr2(names[3]);
+      setTe(names[4]);
+      setB1([names[5], b1[1]]);
+      setB2([names[6], b2[1]]);
+      setB3([names[7], b3[1]]);
+
+
+      getPlayerImages(names[0], 0);
+      getPlayerImages(names[1], 1);
+      getPlayerImages(names[2], 2);
+      getPlayerImages(names[3], 3);
+      getPlayerImages(names[4], 4);
+      getPlayerImages(names[5], 5);
+      getPlayerImages(names[6], 6);
+      getPlayerImages(names[7], 7);
     }
 
  
@@ -148,7 +182,7 @@ export default function Roster({league, scraped}){
           setOpacities([.3, .3, .3, .3, 1, b1[1] == position ? 1 : .3, b2[1] == position ? 1 : .3, b3[1] == position ? 1 : .3])
         }
         else if(position == "B") {
-          let position = getBenchPosition(name, index);
+          getBenchPosition(name, index);
         }
         startIndex = index;
         setTextToDisplay("Here");
@@ -168,14 +202,15 @@ export default function Roster({league, scraped}){
       const q2 = query(collection(db, "leagues", "" + league, "members"));
       const querySnapshot2 = await getDocs(q2);
 
-      let docId;
-      querySnapshot2.forEach((doc2) => {
-          if(doc2.data().memberId == user.uid) {
-            docId = doc2.id;
-          }
-      })
+      if(userDocId == "") {
+        querySnapshot2.forEach((doc2) => {
+            if(doc2.data().memberId == user.uid) {
+              userDocId = doc2.id;
+            }
+        })
+    }
 
-      let toUpdate = doc(db, "leagues", "" + league, "members", "" + docId);
+      let toUpdate = doc(db, "leagues", "" + league, "members", "" + userDocId);
 
       await updateDoc(toUpdate, {
         qb: names[0],
@@ -183,12 +218,13 @@ export default function Roster({league, scraped}){
         wr1: names[2],
         wr2: names[3],
         te: names[4],
-        bench1: [names[5], b1[1]],
-        bench2: [names[6], b2[1]],
-        bench3: [names[7], b3[1]],
+        bench1: names[5] == "" ? "" : [names[5], b1[1]],
+        bench2: names[6] == "" ? "" : [names[6], b2[1]],
+        bench3: names[7] == "" ? "" : [names[7], b3[1]]
       });
 
-      startFind();
+      // startFind();
+      refresh();
     }
 
     async function getBenchPosition(name, index) {
@@ -197,8 +233,6 @@ export default function Roster({league, scraped}){
   
       // var api = new cfb.PlayersApi();
       // var player = await api.playerSearch(name);
-      console.log(index);
-
       if(index == 5) {
         selectPlayer(b1[1], name, index);
       }
@@ -233,7 +267,7 @@ export default function Roster({league, scraped}){
     }
   
     function showPlayerInfo(name, navigation){
-      console.log('showing player info on: ' + name);
+      // console.log('showing player info on: ' + name);
       navigation.navigate("PlayerInfo", {
         playerName: name,
         league: league
@@ -260,24 +294,25 @@ export default function Roster({league, scraped}){
       const q2 = query(collection(db, "leagues", "" + league, "members"));
       const querySnapshot2 = await getDocs(q2);
 
-      let docId;
-      querySnapshot2.forEach((doc2) => {
-          if(doc2.data().memberId == user.uid) {
-            docId = doc2.id;
-          }
-      })
+      if(userDocId == "") {
+        querySnapshot2.forEach((doc2) => {
+            if(doc2.data().memberId == user.uid) {
+              userDocId = doc2.id;
+            }
+        })
+    }
 
-      let toUpdate = doc(db, "leagues", "" + league, "members", "" + docId);
+      let toUpdate = doc(db, "leagues", "" + league, "members", "" + userDocId);
 
       await updateDoc(toUpdate, {
-        qb: qb,
-        rb: rb,
-        wr1: wr1,
-        wr2: wr2,
-        te: te,
-        bench1: b1,
-        bench2: b2,
-        bench3: b3
+        qb: names[0],
+        rb: names[1],
+        wr1: names[2],
+        wr2: names[3],
+        te: names[4],
+        bench1: names[5] == "" ? "" : [names[5], b1[1]],
+        bench2: names[6] == "" ? "" : [names[6], b2[1]],
+        bench3: names[7] == "" ? "" : [names[7], b3[1]]
       });
 
       let toAddTo = collection(db, "leagues", "" + league, "drafted");
@@ -286,8 +321,8 @@ export default function Roster({league, scraped}){
       let arrOfPlayers = [];
       querySnapshot.forEach((doc) => {
         if(name == doc.data().name) {
-          console.log(doc.data().name);
-          console.log(name);
+          // console.log(doc.data().name);
+          // console.log(name);
           del(doc.id);
         }
       });
@@ -298,7 +333,8 @@ export default function Roster({league, scraped}){
       forceUpdate();
 
 
-      startFind();
+      // startFind();
+      refresh();
     }
 
     async function del(document){
