@@ -30,9 +30,9 @@ export default function Roster({league, scraped}){
     const [wr1, setWr1] = useState("");
     const [wr2, setWr2] = useState("");
     const [te, setTe] = useState("");
-    const [b1, setB1] = useState("");
-    const [b2, setB2] = useState("");
-    const [b3, setB3] = useState("");
+    const [b1, setB1] = useState(["", ""]);
+    const [b2, setB2] = useState(["", ""]);
+    const [b3, setB3] = useState(["", ""]);
 
     const [, updateState] = useState();
     const forceUpdate = React.useCallback(() => updateState({}, []));
@@ -59,7 +59,7 @@ export default function Roster({league, scraped}){
     }, [isFocused])
 
 
-    // start of the program
+    // images not updating after rearranging
     const getPlayerImages = async (name, index) => {
 
       let toAddTo = collection(db, "leagues", "" + league, "drafted");
@@ -107,22 +107,22 @@ export default function Roster({league, scraped}){
         names[3] = doc2.data().wr2;
         setTe(doc2.data().te);
         names[4] = doc2.data().te;
-        setB1(doc2.data().bench1);
-        names[5] = doc2.data().bench1;
-        setB2(doc2.data().bench2);
-        names[6] = doc2.data().bench2;
-        setB3(doc2.data().bench3);
-        names[7] = doc2.data().bench3;
+        setB1([doc2.data().bench1[0], doc2.data().bench1[1]]);
+        names[5] = doc2.data().bench1[0];
+        setB2([doc2.data().bench2[0], doc2.data().bench2[1]]);
+        names[6] = doc2.data().bench2[0];
+        setB3([doc2.data().bench3[0], doc2.data().bench3[1]]);
+        names[7] = doc2.data().bench3[0];
 
         // if(playerImages[0] == 'https://a.espncdn.com/combiner/i?img=/i/headshots/nophoto.png&w=200&h=146') {
-          getPlayerImages(names[0], 0);
-          getPlayerImages(names[1], 1);
-          getPlayerImages(names[2], 2);
-          getPlayerImages(names[3], 3);
-          getPlayerImages(names[4], 4);
-          getPlayerImages(names[5], 5);
-          getPlayerImages(names[6], 6);
-          getPlayerImages(names[7], 7);
+          getPlayerImages(qb, 0);
+          getPlayerImages(rb, 1);
+          getPlayerImages(wr1, 2);
+          getPlayerImages(wr2, 3);
+          getPlayerImages(te, 4);
+          getPlayerImages(b1[0], 5);
+          getPlayerImages(b2[0], 6);
+          getPlayerImages(b3[0], 7);
           // scraped2 = true;
         // }
     }
@@ -184,38 +184,32 @@ export default function Roster({league, scraped}){
         wr1: names[2],
         wr2: names[3],
         te: names[4],
-        bench1: names[5],
-        bench2: names[6],
-        bench3: names[7]
+        bench1: [names[5], b1[1]],
+        bench2: [names[6], b2[1]],
+        bench3: [names[7], b3[1]],
       });
-
-      getPlayerImages(names[startIndex], startIndex);
-      getPlayerImages(names[endIndex], endIndex);
 
       startFind();
     }
 
     async function getBenchPosition(name, index) {
-      const ApiKeyAuth = defaultClient.authentications['ApiKeyAuth'];
-      ApiKeyAuth.apiKey = "Bearer iEgwLD0Q2/fKfE2JrnvQXS2kb4Yim4jMK4PxkPQGiaQ7EJX54+W8ZrTwuVgB6vJ6";
+      // const ApiKeyAuth = defaultClient.authentications['ApiKeyAuth'];
+      // ApiKeyAuth.apiKey = "Bearer iEgwLD0Q2/fKfE2JrnvQXS2kb4Yim4jMK4PxkPQGiaQ7EJX54+W8ZrTwuVgB6vJ6";
   
-      var api = new cfb.PlayersApi();
-      var player = await api.playerSearch(name);
+      // var api = new cfb.PlayersApi();
+      // var player = await api.playerSearch(name);
+      console.log(index);
 
-      var acceptable = ["QB", "RB", "WR", "TE"];
-      console.log(player);
-
-      var correct = 0;
-
-      for(var i = player.length - 1; i >= 0; i--){
-        if(acceptable.includes(player[i].position)) {
-          correct = i;
-          break;
-        }
+      if(index == 5) {
+        selectPlayer(b1[1], name, index);
       }
-
-      console.log(player[correct].position);
-      selectPlayer(player[correct].position, name, index);
+      if(index == 6) {
+        selectPlayer(b2[1], name, index);
+      }
+      if(index == 7) {
+        selectPlayer(b3[1], name, index);
+      }
+      
     }
 
     const PlayerCell = ({position, name, navigation, index}) => {
@@ -277,14 +271,14 @@ export default function Roster({league, scraped}){
       let toUpdate = doc(db, "leagues", "" + league, "members", "" + docId);
 
       await updateDoc(toUpdate, {
-        qb: names[0],
-        rb: names[1],
-        wr1: names[2],
-        wr2: names[3],
-        te: names[4],
-        bench1: names[5],
-        bench2: names[6],
-        bench3: names[7]
+        qb: qb,
+        rb: rb,
+        wr1: wr1,
+        wr2: wr2,
+        te: te,
+        bench1: b1,
+        bench2: b2,
+        bench3: b3
       });
 
       let toAddTo = collection(db, "leagues", "" + league, "drafted");
@@ -333,9 +327,9 @@ export default function Roster({league, scraped}){
               <PlayerCell position = "WR" name = {wr1} navigation = {navigation} index = {2}></PlayerCell>
               <PlayerCell position = "WR" name = {wr2} navigation = {navigation} index = {3}></PlayerCell>
               <PlayerCell position = "TE" name = {te} navigation = {navigation} index = {4}></PlayerCell>
-              <PlayerCell position = "B" name = {b1} navigation = {navigation} index = {5}></PlayerCell>
-              <PlayerCell position = "B" name = {b2} navigation = {navigation} index = {6}></PlayerCell>
-              <PlayerCell position = "B" name = {b3} navigation = {navigation} index = {7}></PlayerCell>
+              <PlayerCell position = "B" name = {b1[0]} navigation = {navigation} index = {5}></PlayerCell>
+              <PlayerCell position = "B" name = {b2[0]} navigation = {navigation} index = {6}></PlayerCell>
+              <PlayerCell position = "B" name = {b3[0]} navigation = {navigation} index = {7}></PlayerCell>
             </View>
 
       </ScrollView>

@@ -143,19 +143,19 @@ export default function AddPlayers({league}){
       }
       else if(doc2.data().bench1 == "") {
         await updateDoc(userDrafting, {
-          bench1: name
+          bench1: [name, position]
         });
         updateVals(name, navigation);
       }
       else if(doc2.data().bench2 == "") {
         await updateDoc(userDrafting, {
-          bench2: name
+          bench2: [name, position]
         });
         updateVals(name, navigation);
       }
       else if(doc2.data().bench3 == "") {
         await updateDoc(userDrafting, {
-          bench3: name
+          bench3: [name, position]
         });
         updateVals(name, navigation);
       }
