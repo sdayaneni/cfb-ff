@@ -132,24 +132,23 @@ export default function Roster({league, scraped}){
     function selectPlayer(position, name, index) {
       if(textToDisplay == "Move") {
         if(position == "QB") {
-          setDisabled([false, true, true, true, true, b1[1] == position, b2[1] == position, b3[1] == position]);
+          setDisabled([false, true, true, true, true, (b1[1] != position), (b2[1] != position), (b3[1] != position)]);
           setOpacities([1, .3, .3, .3, .3, b1[1] == position ? 1 : .3, b2[1] == position ? 1 : .3, b3[1] == position ? 1 : .3])
         }
         else if(position == "RB") {
-          setDisabled([true, false, true, true, true, b1[1] == position, b2[1] == position, b3[1] == position]);
-          setOpacities([.3, 1, .3, .3, .3, b1[1] == position ? 1 : .3, b2[1] == position ? 1 : .3, b3[1] == position ? 1 : .3])
+          setDisabled([true, false, true, true, true, (b1[1] != position), (b2[1] != position), (b3[1] != position)]);
+          setOpacities([.3, 1, .3, .3, .3, b1[1] == position ? 1 : .3, b2[1] == position ? 1 : .3, b3[1] == position ? 1 : .3]);
         }
         else if(position == "WR") {
-          setDisabled([true, true, false, false, true, b1[1] == position, b2[1] == position, b3[1] == position]);
+          setDisabled([true, true, false, false, true, (b1[1] != position), (b2[1] != position), (b3[1] != position)]);
           setOpacities([.3, .3, 1, 1, .3, b1[1] == position ? 1 : .3, b2[1] == position ? 1 : .3, b3[1] == position ? 1 : .3])
         }
         else if(position == "TE") {
-          setDisabled([true, true, true, true, false, b1[1] == position, b2[1] == position, b3[1] == position]);
+          setDisabled([true, true, true, true, false, (b1[1] != position), (b2[1] != position), (b3[1] != position)]);
           setOpacities([.3, .3, .3, .3, 1, b1[1] == position ? 1 : .3, b2[1] == position ? 1 : .3, b3[1] == position ? 1 : .3])
         }
         else if(position == "B") {
           let position = getBenchPosition(name, index);
-          console.log(position);
         }
         startIndex = index;
         setTextToDisplay("Here");
