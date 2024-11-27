@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/core';
 import { useIsFocused } from "@react-navigation/native";
 
 const fetch = require("node-fetch");
-const cheerio = require("cheerio");
+// const cheerio = require("cheerio");
 
 const cfb = require('cfb.js');
 const defaultClient = cfb.ApiClient.instance;
@@ -62,7 +62,6 @@ export default function Roster({league, scraped}){
     }, [isFocused])
 
 
-    // images not updating after rearranging
     const getPlayerImages = async (name, index) => {
       let toAddTo = collection(db, "leagues", "" + league, "drafted");
       const q = query(toAddTo);
@@ -97,7 +96,7 @@ export default function Roster({league, scraped}){
               }
           })
       }
-      console.log(memberDoc);
+      console.log(memberDoc)
       getRoster(memberDoc);
     }
 
@@ -118,8 +117,6 @@ export default function Roster({league, scraped}){
         names[6] = doc2.data().bench2[0];
         setB3([doc2.data().bench3[0], doc2.data().bench3[1]]);
         names[7] = doc2.data().bench3[0];
-
-        console.log(doc2.data().rb)
 
         // if(playerImages[0] == 'https://a.espncdn.com/combiner/i?img=/i/headshots/nophoto.png&w=200&h=146') {
         getPlayerImages(names[0], 0);

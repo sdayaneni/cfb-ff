@@ -7,7 +7,7 @@ import React,{useState, useEffect} from 'react';
 import { useIsFocused } from "@react-navigation/native";
 
 const fetch = require("node-fetch");
-const cheerio = require("cheerio");
+// const cheerio = require("cheerio");
 
 const cfb = require('cfb.js');
 const defaultClient = cfb.ApiClient.instance;
@@ -243,7 +243,7 @@ export default function DraftNew({league}) {
     }
     setIsLoading(true);
     navigation.navigate("Drafted");
-    getImages(name, updateImages);
+    // getImages(name, updateImages);
     
     await updateDoc(toAddTo, {
       turn: (currentTurn + 1),
@@ -253,61 +253,61 @@ export default function DraftNew({league}) {
   }
   
   
-  const getRawData = (URL) => {
-    return fetch(URL)
-       .then((response) => response.text())
-       .then((data) => {
-          return data;
-       });
-  };
+  // const getRawData = (URL) => {
+  //   return fetch(URL)
+  //      .then((response) => response.text())
+  //      .then((data) => {
+  //         return data;
+  //      });
+  // };
   
-  async function getImages(name, callBack) {
-    const ApiKeyAuth = defaultClient.authentications['ApiKeyAuth'];
-    ApiKeyAuth.apiKey = "Bearer iEgwLD0Q2/fKfE2JrnvQXS2kb4Yim4jMK4PxkPQGiaQ7EJX54+W8ZrTwuVgB6vJ6";
-    var api = new cfb.PlayersApi();
+  // async function getImages(name, callBack) {
+  //   const ApiKeyAuth = defaultClient.authentications['ApiKeyAuth'];
+  //   ApiKeyAuth.apiKey = "Bearer iEgwLD0Q2/fKfE2JrnvQXS2kb4Yim4jMK4PxkPQGiaQ7EJX54+W8ZrTwuVgB6vJ6";
+  //   var api = new cfb.PlayersApi();
   
-    var player = await api.playerSearch(name);
+  //   var player = await api.playerSearch(name);
   
-    var teamToSearch = player[0].team;
-    // console.log(teamToSearch)
+  //   var teamToSearch = player[0].team;
+  //   // console.log(teamToSearch)
   
-    const rawData = await getRawData(URL);
-    const parsedData = cheerio.load(rawData);
+  //   const rawData = await getRawData(URL);
+  //   const parsedData = cheerio.load(rawData);
   
-    var allTeamLinks = parsedData('div.pl3').children('a');
-    var teamLink = "";
-    let finalLink;
+  //   var allTeamLinks = parsedData('div.pl3').children('a');
+  //   var teamLink = "";
+  //   let finalLink;
   
-    for(var i = 0; i < allTeamLinks.length; i++) {
-      if(allTeamLinks.eq(i).attr('href').replace('-', '').toUpperCase().includes(teamToSearch.replace(' ', '-').toUpperCase())) {
-        teamLink = allTeamLinks.eq(i).attr('href');
-        linkIdNum = teamLink.substring(28);
-        finalLink = "https://www.espn.com/college-football/team/roster/_/id/" + linkIdNum;
-        // console.log(finalLink)
-        break;
-      }
-    }
+  //   for(var i = 0; i < allTeamLinks.length; i++) {
+  //     if(allTeamLinks.eq(i).attr('href').replace('-', '').toUpperCase().includes(teamToSearch.replace(' ', '-').toUpperCase())) {
+  //       teamLink = allTeamLinks.eq(i).attr('href');
+  //       linkIdNum = teamLink.substring(28);
+  //       finalLink = "https://www.espn.com/college-football/team/roster/_/id/" + linkIdNum;
+  //       // console.log(finalLink)
+  //       break;
+  //     }
+  //   }
   
-    var newRawData = await getRawData(finalLink, name);
-    let imageLink;
-    // console.log(newRawData)
-    const newParsedData = cheerio.load(newRawData);
-    for(var i = 0; i < newParsedData('img').length; i++) {
-      if(newParsedData('img').eq(i).attr('title') == name) {
-        imageLink = newParsedData('img').eq(i).attr('alt');
-        await callBack(imageLink.toString(), name)
-      }
-    }
-  }
+  //   var newRawData = await getRawData(finalLink, name);
+  //   let imageLink;
+  //   // console.log(newRawData)
+  //   const newParsedData = cheerio.load(newRawData);
+  //   for(var i = 0; i < newParsedData('img').length; i++) {
+  //     if(newParsedData('img').eq(i).attr('title') == name) {
+  //       imageLink = newParsedData('img').eq(i).attr('alt');
+  //       await callBack(imageLink.toString(), name)
+  //     }
+  //   }
+  // }
   
-  async function updateImages(url, name) {
-    let toAddTo = collection(db, "leagues", "" + leagueId, "drafted");
-    await addDoc(toAddTo, {
-      name: name,
-      imageURL: url
-  });
-  setIsLoading(false);
-  }
+  // async function updateImages(url, name) {
+  //   let toAddTo = collection(db, "leagues", "" + leagueId, "drafted");
+  //   await addDoc(toAddTo, {
+  //     name: name,
+  //     imageURL: url
+  // });
+  // setIsLoading(false);
+  // }
   
   function showPlayerInfo(name, navigation){
     console.log('showing player info on: ' + name);

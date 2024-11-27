@@ -1,5 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
+import 'react-native-reanimated'
 import Draft from './screens/Draft';
 import Login from './screens/Login';
 import Home from './screens/Home';
