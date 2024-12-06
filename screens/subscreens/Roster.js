@@ -75,7 +75,7 @@ export default function Roster({league, scraped}){
         }
       });
       setPlayerImages(currentPlayers);
-          // console.log(doc.data().imageURL)
+      // console.log(doc.data().imageURL)
       forceUpdate();
     };
 
@@ -245,20 +245,22 @@ export default function Roster({league, scraped}){
     const PlayerCell = ({position, name, navigation, index}) => {
       return  (
           <TouchableOpacity disabled = {disabled[index]} style={[styles.item, {opacity: opacities[index]}]} onPress={() => showPlayerInfo(name, navigation)}>
-              <View style={styles.itemLeft}>
-                  <View style={styles.square}>
-                      <Text style = {styles.positionText}>{position}</Text>
+              <View style={[styles.itemLeft]}>
+                  <View style = {{}}>
+                    <View style={[styles.square]}>
+                        <Text style = {styles.positionText}>{position}</Text>
+                    </View>
                   </View>
-                  <View>
-                   <Image source={{uri: playerImages[index]}} style = {{width: 40, height: 40}}></Image> 
+                  <View style = {{}}>
+                    <Image source={{uri: playerImages[index]}} style = {{width: 50, height: 50, marginLeft: -5}}></Image> 
                   </View>
                   <Text style={styles.itemText}>{name}</Text>
               </View>
-              <TouchableOpacity  disabled = {disabled[index]} style = {{backgroundColor: '#9f86fc', opacity: 0.9, borderRadius: 5, justifyContent: "center", width: 75, height: 30}} onPress={() => selectPlayer(position, name, index)}>
-                      <View>
-                          <Text style = {[styles.sectionTitle, {fontSize: 16, textAlign: "center", marginBottom: 0}]}>{textToDisplay}</Text>
-                      </View>
-                  </TouchableOpacity>
+              <TouchableOpacity  disabled = {disabled[index]} style = {{backgroundColor: '#9f86fc', opacity: 0.9, borderRadius: 5, justifyContent: "center", width: 75, height: 30, marginBottom: 10}} onPress={() => selectPlayer(position, name, index)}>
+                <View>
+                    <Text style = {[styles.sectionTitle, {fontSize: 16, textAlign: "center", marginBottom: 0}]}>{textToDisplay}</Text>
+                </View>
+              </TouchableOpacity>
           </TouchableOpacity>
       )
     }
@@ -380,17 +382,19 @@ const styles = StyleSheet.create({
     },
     item: {
         backgroundColor: '#211f1f',
-        padding: 15,
+        padding: 10,
         borderRadius: 10,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         marginBottom: 18,
+        paddingBottom: 0
     },
     itemLeft: {
       flexDirection: 'row',
       alignItems: 'center',
       flexWrap: 'wrap',
+      height: '100%',
     },
     square: {
       width: 33,
@@ -399,13 +403,16 @@ const styles = StyleSheet.create({
       opacity: 0.9,
       borderRadius: 5,
       marginRight: 15,
-      justifyContent: "center"
+      justifyContent: "center",
+      marginBottom: 10
     },
     itemText: {
-      maxWidth: '80%',
+      maxWidth: '61%',
       color: "white",
-      // fontWeight: 'bold',
-      fontSize: 14
+      fontWeight: "500",
+      fontSize: 14,
+      marginLeft: 8,
+      paddingBottom: 10
     },
     circular: {
       width: 12,
