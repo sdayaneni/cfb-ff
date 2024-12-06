@@ -63,19 +63,20 @@ export default function Roster({league, scraped}){
 
 
     const getPlayerImages = async (name, index) => {
+      let currentPlayers = playerImages;
+      currentPlayers[index] = 'https://a.espncdn.com/combiner/i?img=/i/headshots/nophoto.png&w=200&h=146';
       let toAddTo = collection(db, "leagues", "" + league, "drafted");
       const q = query(toAddTo);
       const querySnapshot = await getDocs(q);
       let arrOfPlayers = [];
       querySnapshot.forEach((doc) => {
-        if(name == doc.data().name) {
-          let currentPlayers = playerImages;
+        if(name == doc.data().name) { 
           currentPlayers[index] = doc.data().imageURL;
-          setPlayerImages(currentPlayers);
-          // console.log(doc.data().imageURL)
-          forceUpdate();
         }
       });
+      setPlayerImages(currentPlayers);
+          // console.log(doc.data().imageURL)
+      forceUpdate();
     };
 
     async function startFind() {
@@ -96,7 +97,6 @@ export default function Roster({league, scraped}){
               }
           })
       }
-      console.log(memberDoc)
       getRoster(memberDoc);
     }
 
@@ -403,7 +403,9 @@ const styles = StyleSheet.create({
     },
     itemText: {
       maxWidth: '80%',
-      color: "white"
+      color: "white",
+      // fontWeight: 'bold',
+      fontSize: 14
     },
     circular: {
       width: 12,
@@ -420,6 +422,7 @@ const styles = StyleSheet.create({
     },
     positionText: {
         textAlign: "center",
-        color: "white"
+        color: "white",
+        // fontWeight: 'bold'
     }
   });
