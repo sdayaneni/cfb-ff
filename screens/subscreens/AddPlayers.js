@@ -1,10 +1,12 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView, TextInput, Picker, TouchableHighlight } from "react-native";
+import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView, TextInput, Picker, TouchableHighlight, SafeAreaView } from "react-native";
 import {getFirestore, collection, addDoc, doc, setDoc, getDoc, getDocs, deleteDoc, query, orderBy, onSnapshot, updateDoc} from 'firebase/firestore';
 import {auth, db} from '../../firebase.js';
 import React,{useState, useEffect} from 'react';
 import { useNavigation } from '@react-navigation/core';
 import { useIsFocused } from "@react-navigation/native";
 import Modal from "react-native-modal";
+import { SearchBar } from 'react-native-elements';
+import { Ionicons } from '@expo/vector-icons'; 
 
 // const fetch = require("node-fetch");
 // const cheerio = require("cheerio");
@@ -259,6 +261,14 @@ export default function AddPlayers({league}){
     return (
         <View style = {{backgroundColor: "black"}}>
           <Text style={[styles.sectionTitle, {paddingTop: 60}]}>Add Players</Text>
+
+          <SafeAreaView style = {{marginLeft: 20, flexDirection: "row", marginBottom: 10}}>
+            <View style = {{marginLeft: -20, marginRight: 5, marginTop: 3}}>
+              <Ionicons name="search" size={35} color="#5e5e5c" />
+            </View>
+            <TextInput placeholder="Search" clearButtonMode="always" placeholderTextColor="#fff" style = {{flex: 1, paddingHorizontal: 20, paddingVertical: 10, borderColor: "#5e5c5c", borderWidth: 2, borderRadius: 8, color: "#fff"}}></TextInput>
+          </SafeAreaView>
+
           <View>
             <Modal
                 isVisible={modalVisible}>
@@ -322,7 +332,7 @@ export default function AddPlayers({league}){
 
 const styles = StyleSheet.create({
     container: {
-      padding: 20,
+      paddingVertical: 20,
       backgroundColor: 'black',
       width: 400,
       height: 606
@@ -334,7 +344,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        marginBottom: 18,
+        marginBottom: 15,
     },
     itemLeft: {
       flexDirection: 'row',
