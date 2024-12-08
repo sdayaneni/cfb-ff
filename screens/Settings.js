@@ -21,9 +21,9 @@ export default function ({ navigation }) {
   useEffect(() => {
     async function fetchData() {
       try {
-        const displayName = await getDisplayName(auth.currentUser.uid);
+        // const displayName = await getDisplayName(auth.currentUser.uid);
         const emailPrefix = auth.currentUser.email.substring(0, auth.currentUser.email.indexOf("@"));
-        setName(displayName || emailPrefix);
+        setName(emailPrefix);
         setEmail(auth.currentUser.email);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -56,16 +56,14 @@ export default function ({ navigation }) {
     );    
   }
 
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      await AsyncStorage.removeItem('email');
-      await AsyncStorage.removeItem('password');
-      navigation.navigate('Login');
-    } catch (error) {
-      console.error("Error logging out:", error);
-    }
-  };
+  const handleLogout = () => {
+    auth
+      .signOut()
+      .then(() => {
+        navigation.replace("Login")
+      })
+      .catch(error => alert(error.message))
+  }
 
   return (
     <Layout>
@@ -73,7 +71,7 @@ export default function ({ navigation }) {
         style={{
           display: "flex",
           flexDirection: "row",
-          paddingHorizontal: 15
+          paddingHorizontal: 15,
         }}>
         <Text
           size="h1"
@@ -84,7 +82,8 @@ export default function ({ navigation }) {
       </View>
         
       <ScrollView
-        bounces="false"
+        style = {{}}
+        bounces = {false}
         contentContainerStyle={{
           flexGrow: 1,
           alignContent: "center",

@@ -64,15 +64,6 @@ export default function YourLeagues () {
         
             setLeagueData(itemList);
        }
-
-       const handleSignOut = () => {
-        auth
-          .signOut()
-          .then(() => {
-            navigation.replace("Login")
-          })
-          .catch(error => alert(error.message))
-      }
     
 
        return(
