@@ -1,10 +1,12 @@
-import {StyleSheet, Button, View, SafeAreaView, Text, Alert, FlatList, Image, TouchableHighlight, ScrollView, TouchableOpacity, ActivityIndicator} from 'react-native';
+import {StyleSheet, Button, View, SafeAreaView, Text, Alert, FlatList, Image, TouchableHighlight, ScrollView, TouchableOpacity, ActivityIndicator, TextInput} from 'react-native';
 
 import { useNavigation } from '@react-navigation/core'
 import {getFirestore, collection, addDoc, doc, setDoc, getDoc, getDocs, deleteDoc, query, orderBy, onSnapshot, updateDoc} from 'firebase/firestore';
 import {auth, db} from '../../firebase.js';
 import React,{useState, useEffect} from 'react';
 import { useIsFocused } from "@react-navigation/native";
+import { Ionicons } from '@expo/vector-icons'; 
+
 
 const fetch = require("node-fetch");
 // const cheerio = require("cheerio");
@@ -356,12 +358,20 @@ export default function DraftNew({league}) {
           </View>
                 : */}
         <View>
-          <View  style = {{flexDirection: "row"}}>
+          <View  style = {{marginHorizontal: 20, flexDirection: "row"}}>
             <Text style = {[styles.sectionTitle, {fontSize: 15}]}>{clockText}</Text>
             <TouchableOpacity style={styles.submitContainer}  onPress = {handleSignOut}>
                     <Text style={[styles.signOutText, {color: "#FFF",fontWeight: "600",fontSize: 10}]}>Sign Out</Text>
             </TouchableOpacity>
           </View>
+
+          <SafeAreaView style = {{marginHorizontal: 20, flexDirection: "row", marginBottom: 10}}>
+            <View style = {{marginLeft: -20, marginRight: 5, marginTop: 3}}>
+              <Ionicons name="search" size={35} color="#5e5e5c" />
+            </View>
+            <TextInput placeholder="Search" clearButtonMode="always" placeholderTextColor="#fff" style = {{flex: 1, paddingHorizontal: 20, paddingVertical: 10, borderColor: "#5e5c5c", borderWidth: 2, borderRadius: 8, color: "#fff"}}></TextInput>
+          </SafeAreaView>
+
             <Row>
               <Col numRows={2}>
                   <TouchableHighlight onPress={() => doNothing('qbs')} underlayColor="white">
@@ -407,8 +417,8 @@ export default function DraftNew({league}) {
 const styles = StyleSheet.create({
     app: {
         paddingTop: 50,
-        paddingRight: 20,
-        paddingLeft: 20,
+        // paddingRight: 20,
+        // paddingLeft: 20,
         flex: 4, // the number of columns you want to devide the screen into
         marginHorizontal: "auto",
         width: 400,

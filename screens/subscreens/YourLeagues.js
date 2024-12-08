@@ -7,7 +7,9 @@ import { useIsFocused } from "@react-navigation/native";
 import {getFirestore, collection, addDoc, doc, setDoc, getDoc, getDocs, deleteDoc, query, orderBy} from 'firebase/firestore';
 import {db} from "../../firebase.js"
 import { auth } from "../../firebase";
-import { useNavigation } from '@react-navigation/core'
+import { useNavigation } from '@react-navigation/core';
+import { Ionicons } from "@expo/vector-icons";
+
 
 export default function YourLeagues () {
 
@@ -75,8 +77,21 @@ export default function YourLeagues () {
 
        return(
            <ScrollView style = {styles.container}>
-                <TouchableOpacity style={styles.submitContainer}  onPress = {handleSignOut}>
+                {/* <TouchableOpacity style={styles.submitContainer}  onPress = {handleSignOut}>
                         <Text style={[styles.signOutText, {color: "#FFF",fontWeight: "600",fontSize: 10,}]}>Sign Out</Text>
+                </TouchableOpacity> */}
+                <TouchableOpacity
+                    onPress={() => navigation.navigate("Settings")}
+                    style={{
+                        marginVertical: 'auto',
+                        marginLeft: "auto",
+                    }}
+                    >
+                    <Ionicons
+                        name={"ellipsis-vertical"}
+                        size={25}
+                        color={"white"}
+                    />
                 </TouchableOpacity>
                <Text style = {styles.text}>Your Leagues</Text>
                {leagueData}
