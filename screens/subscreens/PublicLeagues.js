@@ -8,6 +8,7 @@ import {db} from "../../firebase.js"
 import { useIsFocused } from "@react-navigation/native";
 import { auth } from "../../firebase";
 import { useNavigation } from '@react-navigation/core'
+import { Ionicons } from "@expo/vector-icons";
 
 export default function PublicLeagues () {
 
@@ -93,7 +94,22 @@ export default function PublicLeagues () {
 
     return(
         <ScrollView style = {styles.container}>
-            <Text style = {[styles.text, {marginBottom: 20}]}>Public Leagues</Text>
+            <View style = {{flexDirection: "row", marginBottom: 20, paddingHorizontal: 10}}>
+                <Text style = {[styles.text]}>Public Leagues</Text>
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate("Settings")}
+                        style={{
+                            marginVertical: 'auto',
+                            marginLeft: 'auto',
+                        }}
+                        >
+                        <Ionicons
+                            name={"ellipsis-vertical"}
+                            size={25}
+                            color={"white"}
+                        />
+                    </TouchableOpacity>
+               </View>
             {leagueData}
         </ScrollView>
     );
@@ -103,10 +119,10 @@ export default function PublicLeagues () {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: "black",
-        paddingTop: 65,
+        paddingTop: 50,
     },
     text: {
-        fontSize: 24,
+        fontSize: 28,
         fontWeight: 'bold',
         // marginBottom: 20,
         color: "white",

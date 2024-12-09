@@ -7,6 +7,7 @@ import {useState, useEffect} from 'react';
 import {db} from "../../firebase.js"
 import { auth } from "../../firebase";
 import { useNavigation } from '@react-navigation/core'
+import { Ionicons } from "@expo/vector-icons";
 
 let leagueSize;
 let leagueType;
@@ -61,7 +62,22 @@ export default function CreateLeague () {
 
     return(
         <View style = {styles.container}>
-            <Text style = {styles.header}>Create League</Text>
+            <View style = {{flexDirection: "row", marginBottom: 20, paddingHorizontal: 10}}>
+                <Text style = {styles.header}>Create League</Text>
+                <TouchableOpacity
+                    onPress={() => navigation.navigate("Settings")}
+                    style={{
+                        marginVertical: 'auto',
+                        marginLeft: 'auto',
+                    }}
+                    >
+                    <Ionicons
+                        name={"ellipsis-vertical"}
+                        size={25}
+                        color={"white"}
+                    />
+                </TouchableOpacity>
+            </View>
 
             <ScrollView style = {{paddingHorizontal: 30,}}>
 
@@ -109,13 +125,12 @@ export default function CreateLeague () {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: "black",
-        paddingTop: 65,
+        paddingTop: 50,
         height: 1000,
     },
     header: {
-        fontSize: 24,
+        fontSize: 28,
         fontWeight: 'bold',
-        marginBottom: 20,
         color: "white",
         paddingLeft: 20
     },

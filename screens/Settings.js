@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-// import { getAuth, signOut } from "firebase/auth";
+import { getAuth, signOut } from "firebase/auth";
 import { View, ScrollView, Alert } from 'react-native';
 import {
   Layout,
@@ -56,14 +56,17 @@ export default function ({ navigation }) {
     );    
   }
 
-  const handleLogout = () => {
-    auth
-      .signOut()
-      .then(() => {
-        navigation.replace("Login")
-      })
-      .catch(error => alert(error.message))
-  }
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      await AsyncStorage.removeItem('email');
+      await AsyncStorage.removeItem('password');
+      navigation.replace('Login');
+      navigation.reset({index: 0, routes: [{name: 'Login'}]})
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
 
   return (
     <Layout>
@@ -113,7 +116,7 @@ export default function ({ navigation }) {
           }}> {email} </Text>
 
         <Button
-          text="Set Display Name"
+          text="Set Team Name"
           type="TouchableHighlight"
           underlayColor={themeColor.primary300}
           onPress={promptName}

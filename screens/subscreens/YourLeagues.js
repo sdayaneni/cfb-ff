@@ -71,20 +71,22 @@ export default function YourLeagues () {
                 {/* <TouchableOpacity style={styles.submitContainer}  onPress = {handleSignOut}>
                         <Text style={[styles.signOutText, {color: "#FFF",fontWeight: "600",fontSize: 10,}]}>Sign Out</Text>
                 </TouchableOpacity> */}
-                <TouchableOpacity
-                    onPress={() => navigation.navigate("Settings")}
-                    style={{
-                        marginVertical: 'auto',
-                        marginLeft: "auto",
-                    }}
-                    >
-                    <Ionicons
-                        name={"ellipsis-vertical"}
-                        size={25}
-                        color={"white"}
-                    />
-                </TouchableOpacity>
-               <Text style = {styles.text}>Your Leagues</Text>
+                <View style = {{flexDirection: "row", marginBottom: 20, paddingHorizontal: 10}}>
+                    <Text style = {styles.text}>Your Leagues</Text>
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate("Settings")}
+                        style={{
+                            marginVertical: 'auto',
+                            marginLeft: 'auto',
+                        }}
+                        >
+                        <Ionicons
+                            name={"ellipsis-vertical"}
+                            size={25}
+                            color={"white"}
+                        />
+                    </TouchableOpacity>
+               </View>
                {leagueData}
            </ScrollView>
        );
@@ -94,12 +96,11 @@ export default function YourLeagues () {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: "black",
-        paddingTop: 50
+        paddingTop: 50,
     },
     text: {
-        fontSize: 24,
+        fontSize: 28,
         fontWeight: 'bold',
-        marginBottom: 20,
         color: "white",
     },
     submitContainer: {
