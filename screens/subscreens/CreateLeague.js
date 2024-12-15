@@ -8,6 +8,8 @@ import {db} from "../../firebase.js"
 import { auth } from "../../firebase";
 import { useNavigation } from '@react-navigation/core'
 import { Ionicons } from "@expo/vector-icons";
+import DateTimePicker from '@react-native-community/datetimepicker';
+import RNPickerSelect from 'react-native-picker-select';
 
 let leagueSize;
 let leagueType;
@@ -87,7 +89,6 @@ export default function CreateLeague () {
                         onChangeText = {text => setLeagueName(text)}
                         style={styles.input}
                     />
-                    <View style={{ borderBottomColor: "#D8D8D8", borderBottomWidth: 1 }} />
                 </View>
 
                 <Text style={styles.inputTitle2}>League Size</Text>
@@ -102,6 +103,27 @@ export default function CreateLeague () {
 
                 />
 
+                {/* <View
+                style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    marginTop: 15
+                }}>
+                <Text style={{ marginVertical: "auto" }} fontWeight="bold">Game Mode</Text>
+                <View style={{ marginLeft: "auto" }}>
+                    <RNPickerSelect
+                        placeholder={{ label: 'Select a game mode...', value: null }}
+                        items={[
+                            { label: 'Classic', value: "Classic" },
+                            { label: 'Bingo', value: "Bingo" },
+                        ]}
+                        onValueChange={(value) => setEventType(value)}
+                        style={pickerStyles(true)}
+                        disabled = {false}
+                    />
+                </View>
+                </View> */}
+
                 <Text style={styles.inputTitle2}>League Type</Text>
                 <SelectDropdown
                     data={["Public", "Private"]}
@@ -115,7 +137,7 @@ export default function CreateLeague () {
                 />
 
                 <TouchableOpacity style={styles.submitContainer} onPress = {handleCreateLeague}>
-                    <Text style={[styles.text, {color: "#FFF", fontWeight: "600", fontSize: 16}]}>Create</Text>
+                    <Text style={[styles.text, {color: "#FFF", fontWeight: "bold", fontSize: 16}]}>Create</Text>
                 </TouchableOpacity>
             </ScrollView>
         </View>
@@ -135,21 +157,28 @@ const styles = StyleSheet.create({
         paddingLeft: 20
     },
     inputTitle: {
-        color: "#ABB4BD",
-        fontSize: 14,
+        color: "white",
+        fontSize: 15,
         marginTop: 25,
+        fontWeight: 'bold',
     },
     input: {
-        paddingVertical: 12,
+        flex: 1,
+        paddingHorizontal: 20, 
+        paddingVertical: 10,
+        marginTop: 10, 
+        borderColor: "#adacac", 
+        borderWidth: 2, 
+        borderRadius: 8, 
         color: "#fff",
         fontSize: 14,
-        fontFamily: "Avenir Next",
     },
     inputTitle2: {
-        color: "#ABB4BD",
-        fontSize: 14,
+        color: "white",
+        fontSize: 15,
         marginTop: 75,
         marginBottom: 25,
+        fontWeight: 'bold',
     },
     submitContainer: {
         backgroundColor: "#9f86fc",
@@ -160,12 +189,13 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         color: "#FFF",
-        shadowColor: "#9f86fc",
-        shadowOffset: { width: 0, height: 9 },
-        shadowOpacity: 1,
-        shadowRadius: 20,
+        // shadowColor: "#9f86fc",
+        // shadowOffset: { width: 0, height: 9 },
+        // shadowOpacity: 1,
+        // shadowRadius: 20,
         elevation: 5,
-        marginTop: 100
+        marginTop: 100,
+        // fontWeight: 'bold',
     },
     dropdown1BtnStyle: {
         flex: 1,
@@ -179,3 +209,29 @@ const styles = StyleSheet.create({
       dropdown1BtnTxtStyle: { color: "white"},
 
 });
+
+const pickerStyles = (isDarkmode) => ({
+    inputIOS: {
+      fontSize: 14,
+      paddingVertical: 10,
+      paddingHorizontal: 10,
+      borderWidth: 1,
+      borderRadius: 8,
+      fontFamily: "Ubuntu_400Regular",
+      backgroundColor: isDarkmode ? "#1f1f1f" : themeColor.white,
+      borderColor: isDarkmode ? "#333333" : "#d8d8d8",
+      color: isDarkmode ? "#dddddd" : "black",
+    },
+    inputAndroid: {
+      fontSize: 14,
+      paddingHorizontal: 10,
+      paddingVertical: 8,
+      borderWidth: 1,
+      borderRadius: 8,
+      fontFamily: "Ubuntu_400Regular",
+      backgroundColor: isDarkmode ? "#1f1f1f" : themeColor.white,
+      borderColor: isDarkmode ? "#333333" : "#d8d8d8",
+      color: isDarkmode ? "#dddddd" : "black",
+    }
+  });
+  
