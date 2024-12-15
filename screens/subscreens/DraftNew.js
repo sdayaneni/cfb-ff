@@ -360,9 +360,9 @@ export default function DraftNew({league}) {
         <View>
           <View  style = {{marginHorizontal: 20, flexDirection: "row"}}>
             <Text style = {[styles.sectionTitle, {fontSize: 15}]}>{clockText}</Text>
-            <TouchableOpacity style={styles.submitContainer}  onPress = {handleSignOut}>
+            {/* <TouchableOpacity style={styles.submitContainer}  onPress = {handleSignOut}>
                     <Text style={[styles.signOutText, {color: "#FFF",fontWeight: "600",fontSize: 10}]}>Sign Out</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
 
           <SafeAreaView style = {{marginHorizontal: 20, flexDirection: "row", marginBottom: 10}}>
