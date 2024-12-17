@@ -119,7 +119,7 @@ export default function CreateLeague () {
                         ]}
                         onValueChange={(value) => setEventType(value)}
                         style={pickerStyles(true)}
-                        disabled = {false}
+                        // disabled = {false}
                     />
                 </View>
                 </View> */}

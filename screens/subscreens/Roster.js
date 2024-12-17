@@ -88,15 +88,13 @@ export default function Roster({league, scraped}){
 
         const q2 = query(collection(db, "leagues", "" + league, "members"));
         const querySnapshot2 = await getDocs(q2);
-      
-        if(memberDoc == null) {
-          querySnapshot2.forEach((doc2) => {
-              if(doc2.data().memberId == user.uid) {
-                userDocId = doc2.id
-                memberDoc = doc2;
-              }
-          })
-      }
+    
+        querySnapshot2.forEach((doc2) => {
+            if(doc2.data().memberId == user.uid) {
+              userDocId = doc2.id
+              memberDoc = doc2;
+            }
+        })
       getRoster(memberDoc);
     }
 
@@ -205,10 +203,9 @@ export default function Roster({league, scraped}){
               userDocId = doc2.id;
             }
         })
-    }
+      }
 
       let toUpdate = doc(db, "leagues", "" + league, "members", "" + userDocId);
-
       await updateDoc(toUpdate, {
         qb: names[0],
         rb: names[1],
@@ -220,8 +217,9 @@ export default function Roster({league, scraped}){
         bench3: names[7] == "" ? "" : [names[7], b3[1]]
       });
 
-      // startFind();
       refresh();
+
+      // startFind();
     }
 
     async function getBenchPosition(name, index) {
@@ -299,7 +297,7 @@ export default function Roster({league, scraped}){
               userDocId = doc2.id;
             }
         })
-    }
+      }
 
       let toUpdate = doc(db, "leagues", "" + league, "members", "" + userDocId);
 
