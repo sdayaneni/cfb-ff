@@ -6,9 +6,46 @@ import {db} from "../firebase.js"
 import { auth } from "../firebase";
 import ScrollPicker from 'react-native-wheel-scrollview-picker';
 import { useNavigation } from '@react-navigation/core'
+import DateTimePicker from '@react-native-community/datetimepicker';
+import {
+    useTheme,
+    themeColor,
+  } from "react-native-rapi-ui";
 
 
 export default function ScheduleDraft ({route}) {
+    const [eventStart, setEventStart] = useState(new Date());
+
+    const missingInformation = (field, message) => Alert.alert(field + " Invalid", message, [{ text: 'OK' }]);
+  
+    const handleWrite = async () => {
+        saveNewEvent(
+          getAuth().currentUser.uid,
+          eventName,
+          parseInt((eventStart.getTime() / 1000).toFixed(0)),  // Save start time
+          parseInt((eventEnd.getTime() / 1000).toFixed(0)),        // Save end time
+          eventType,
+          eventSize,
+          joinCode
+        );
+        navigation.goBack();
+    };
+  
+    const onStartDateChange = (event, selectedDate) => {
+      if (event.type == "set") {
+        setEventStart(new Date(selectedDate));
+      }
+    };
+  
+    const onStartTimeChange = (event, selectedTime) => {
+      if (event.type == "set") {
+        let newStart = new Date(eventStart);
+        newStart.setHours(selectedTime.getHours());
+        newStart.setMinutes(selectedTime.getMinutes());
+        setEventStart(newStart);
+      }
+    };
+
     let hours = 0;
     let minutes = 0;
     let days = 0;
@@ -31,19 +68,26 @@ export default function ScheduleDraft ({route}) {
             });
       }
 
-      let nums = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
-
     return(
         <ScrollView style = {styles.container}>
             <Text style = {styles.header}>Schedule Draft</Text>
-            <View style = {{ height: 350, borderRadius: 10, backgroundColor: "#141414", flexDirection: "row"}}>
-            <View>
+            <View style = {{ height: 400, borderRadius: 10, backgroundColor: "#141414", flexDirection: "row"}}>
+                <View
+                style={{
+                display: "flex",
+                flexDirection: "column",
+                // marginLeft: 'auto',
+                }}>
+                <DateTimePicker mode="datetime" display="inline" value={eventStart} onChange={onStartDateChange} themeVariant={true ? "dark" : "light"} accentColor={themeColor.primary} />
+                {/* <DateTimePicker mode="time" display="default" value={eventStart} onChange={onStartTimeChange} themeVariant={true ? "dark" : "light"} accentColor={themeColor.primary} /> */}
+            </View>
+            {/* <View>
                 <Text style = {[styles.time, {paddingTop: 20, marginBottom: -1, elevation: 10, zIndex: 10, color: '#b98dfc'}]}>Days</Text>
                         <View style = {{height: 210, width: 75, borderRadius: 100}}>
                             <ScrollPicker
                                 dataSource={nums}
                                 selectedIndex={0}
-                                onValueChange={(data, selectedIndex) => {
+                                onValueChange={(data) => {
                                     days = data;
                                 }}
 
@@ -85,17 +129,17 @@ export default function ScheduleDraft ({route}) {
               
                             />
                         </View>
-                </View>
+                </View> */}
             </View>
             <TouchableOpacity style = {styles.submitContainer} onPress = {scheduleDraft}>
-                <Text>
+                <Text style = {{color: "#FFF", fontWeight: "bold", fontSize: 16}}>
                     Confirm
                 </Text>
             </TouchableOpacity>
         </ScrollView>
     );
 }
-
+    
 const styles = StyleSheet.create({
     container: {
         backgroundColor: "black",
@@ -103,14 +147,14 @@ const styles = StyleSheet.create({
         paddingHorizontal: 30,
     },
     header: {
-        fontFamily: "Avenir Next",
-        color: "#b98dfc",
-        fontSize: 35,
-        textAlign: "center",
+        fontSize: 28,
+        fontWeight: 'bold',
+        color: "white",
+        // paddingLeft: 20,
         marginBottom: 100
     },
     submitContainer: {
-        backgroundColor: "#b98dfc",
+        backgroundColor: "#9f86fc",
         fontSize: 16,
         borderRadius: 4,
         paddingVertical: 12,
@@ -118,12 +162,13 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         color: "#FFF",
-        shadowColor: "#b98dfc",
-        shadowOffset: { width: 0, height: 9 },
-        shadowOpacity: 1,
-        shadowRadius: 20,
+        // shadowColor: "#9f86fc",
+        // shadowOffset: { width: 0, height: 9 },
+        // shadowOpacity: 1,
+        // shadowRadius: 20,
         elevation: 5,
-        marginTop: 150
+        marginTop: 100,
+        // fontWeight: 'bold',
     },
     dropdown1BtnStyle: {
         flex: 1,
