@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
     inputTitle: {
         color: "white",
         fontSize: 15,
-        marginTop: 25,
+        marginTop: 15,
         fontWeight: 'bold',
     },
     input: {
