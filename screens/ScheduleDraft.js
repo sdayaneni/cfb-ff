@@ -17,17 +17,15 @@ export default function ScheduleDraft ({route}) {
     const [eventStart, setEventStart] = useState(new Date());
 
     const missingInformation = (field, message) => Alert.alert(field + " Invalid", message, [{ text: 'OK' }]);
-  
-    const handleWrite = async () => {
-        saveNewEvent(
-          getAuth().currentUser.uid,
-          eventName,
-          parseInt((eventStart.getTime() / 1000).toFixed(0)),  // Save start time
-          parseInt((eventEnd.getTime() / 1000).toFixed(0)),        // Save end time
-          eventType,
-          eventSize,
-          joinCode
-        );
+    const navigation = useNavigation();
+
+    const scheduleDraft = async () => {
+        let toAddTo = doc(db, "leagues", "" + route.params.league);
+        await updateDoc(toAddTo, {
+            timeOfScheduling : Date.now(),
+            timeOfDraft : parseInt((eventStart.getTime()).toFixed(0)),
+            draftScheduled: true
+        })
         navigation.goBack();
     };
   
@@ -36,100 +34,19 @@ export default function ScheduleDraft ({route}) {
         setEventStart(new Date(selectedDate));
       }
     };
-  
-    const onStartTimeChange = (event, selectedTime) => {
-      if (event.type == "set") {
-        let newStart = new Date(eventStart);
-        newStart.setHours(selectedTime.getHours());
-        newStart.setMinutes(selectedTime.getMinutes());
-        setEventStart(newStart);
-      }
-    };
-
-    let hours = 0;
-    let minutes = 0;
-    let days = 0;
-
-    const navigation = useNavigation();
-
-
-      async function scheduleDraft() {
-            let toAddTo = doc(db, "leagues", "" + route.params.league);
-            let timeToPush = (minutes * 60 * 1000) + (hours * 60 * 60 * 1000) + (days * 60 * 60 * 24 * 1000) + Date.now();
-
-            await updateDoc(toAddTo, {
-                timeOfScheduling : Date.now(),
-                timeOfDraft : timeToPush,
-                draftScheduled: true
-            })
-
-            navigation.replace("WaitForDraft", {
-                league: route.params.league
-            });
-      }
 
     return(
         <ScrollView style = {styles.container}>
             <Text style = {styles.header}>Schedule Draft</Text>
-            <View style = {{ height: 400, borderRadius: 10, backgroundColor: "#141414", flexDirection: "row"}}>
+            <View style = {{height: "63%"}}>
                 <View
                 style={{
                 display: "flex",
                 flexDirection: "column",
-                // marginLeft: 'auto',
+                alignItems: "center",
                 }}>
                 <DateTimePicker mode="datetime" display="inline" value={eventStart} onChange={onStartDateChange} themeVariant={true ? "dark" : "light"} accentColor={themeColor.primary} />
-                {/* <DateTimePicker mode="time" display="default" value={eventStart} onChange={onStartTimeChange} themeVariant={true ? "dark" : "light"} accentColor={themeColor.primary} /> */}
             </View>
-            {/* <View>
-                <Text style = {[styles.time, {paddingTop: 20, marginBottom: -1, elevation: 10, zIndex: 10, color: '#b98dfc'}]}>Days</Text>
-                        <View style = {{height: 210, width: 75, borderRadius: 100}}>
-                            <ScrollPicker
-                                dataSource={nums}
-                                selectedIndex={0}
-                                onValueChange={(data) => {
-                                    days = data;
-                                }}
-
-                                wrapperColor= "#141414"
-                                itemHeight={50}
-                                wrapperHeight={200}                                
-                            />
-                        </View>
-                </View>
-                <View style = {{marginLeft: 20}}>
-                <Text style = {[styles.time, {paddingTop: 20, marginBottom: -1, elevation: 10, zIndex: 10, color: '#b98dfc'}]}>Hours</Text>
-                        <View style = {{height: 210, width: 75, borderRadius: 100, marginLeft: 10}}>
-                            <ScrollPicker
-                                dataSource={nums}
-                                selectedIndex={0}
-                                onValueChange={(data, selectedIndex) => {
-                                    hours = data;
-                                }}
-
-                                wrapperColor= "#141414"
-                                itemHeight={50}
-                                wrapperHeight={200}                                
-                            />
-                        </View>
-                </View>
-                <View>
-                    <Text style = {[styles.time, {paddingTop: 20, marginLeft: 20, marginBottom: -1, elevation: 10, zIndex: 10, color: '#b98dfc'}]}>Min</Text>
-                        <View style = {{height: 210, width: 75, borderRadius: 100, marginLeft: 28}}>
-                            <ScrollPicker
-                                dataSource={nums}
-                                selectedIndex={0}
-                                onValueChange={(data, selectedIndex) => {
-                                    minutes = data;
-                                }}
-
-                                wrapperColor= "#141414"
-                                itemHeight= {50} 
-                                wrapperHeight={200}                                
-              
-                            />
-                        </View>
-                </View> */}
             </View>
             <TouchableOpacity style = {styles.submitContainer} onPress = {scheduleDraft}>
                 <Text style = {{color: "#FFF", fontWeight: "bold", fontSize: 16}}>
@@ -143,7 +60,7 @@ export default function ScheduleDraft ({route}) {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: "black",
-        paddingTop: 50,
+        paddingTop: 65,
         paddingHorizontal: 30,
     },
     header: {
@@ -151,7 +68,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: "white",
         // paddingLeft: 20,
-        marginBottom: 100
+        marginBottom: 75,
     },
     submitContainer: {
         backgroundColor: "#9f86fc",

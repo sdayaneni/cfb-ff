@@ -35,6 +35,14 @@ export default function WaitForDraft({route}){
         }
       }, [timeRemaining]);
 
+    const descheduleDraft = async () => {
+        let toAddTo = doc(db, "leagues", "" + route.params.league);
+        await updateDoc(toAddTo, {
+            draftScheduled: false
+        })
+        navigation.goBack();
+    };
+
     async function getInitialTime(){
         let docRef = doc(db, "leagues", "" + route.params.league);
         let document = await getDoc(docRef);
@@ -49,7 +57,7 @@ export default function WaitForDraft({route}){
         let toAddTo = doc(db, "leagues", "" + route.params.league);
         let document = await getDoc(toAddTo);
 
-        if(document.data().draftStarted == false) {
+        if(document.data().draftStarted == false && document.data().draftScheduled == true) {
             navigation.replace("Draft", {
                 league: route.params.league,
             });
@@ -82,13 +90,17 @@ export default function WaitForDraft({route}){
 
       return (
         <ScrollView style = {styles.container}>
-            <Text style = {styles.header}>Countdown to the Draft</Text>
-            <Text style={styles.time}>{handleTime()}</Text>
-            <TouchableOpacity style = {styles.submitContainer}>
-                <Text style = {{color: "#FFF", fontWeight: "600", fontSize: 16}}>
-                    Cancel
-                </Text>
-            </TouchableOpacity>
+            <Text style = {styles.header}>Countdown</Text>
+            <View style={{height: "70%", alignItems: "center", paddingTop: "50%"}}>
+                <Text style={styles.time}>{handleTime()}</Text>
+            </View>
+            <View style = {{marginBottom: 125}}>
+                <TouchableOpacity style = {styles.submitContainer} onPress = {descheduleDraft}>
+                    <Text style = {{color: "#FFF", fontWeight: "600", fontSize: 16}}>
+                        Cancel
+                    </Text>
+                </TouchableOpacity>
+            </View>
         </ScrollView>
       )
 }
@@ -98,24 +110,26 @@ export default function WaitForDraft({route}){
 const styles = StyleSheet.create({
     container: {
         backgroundColor: "black",
-        paddingTop: 50,
+        paddingTop: 65,
         paddingHorizontal: 30,
+
     },
     header: {
-        // fontFamily: "Avenir Next",
-        color: "#b98dfc",
-        fontSize: 45,
-        textAlign: "center",
-        marginBottom: 150
+        fontSize: 38,
+        fontWeight: 'bold',
+        color: "white",
+        // paddingLeft: 20,
     },
       time: {
-        fontSize: 54,
+        fontSize: 50,
         color: "#fff",
         marginBottom: 30,
         textAlign: "center",
+        fontWeight: "bold"
       },
       submitContainer: {
-        backgroundColor: "#850000",
+        position: 'relative',
+        backgroundColor: "#9f86fc",
         fontSize: 16,
         borderRadius: 4,
         paddingVertical: 12,
@@ -124,7 +138,8 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         color: "#FFF",
         elevation: 5,
-        marginTop: 190
+        marginTop: 100,
+        zIndex: 100000
     },
 
 });

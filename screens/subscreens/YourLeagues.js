@@ -87,7 +87,8 @@ export default function YourLeagues () {
                         />
                     </TouchableOpacity>
                </View>
-               {leagueData}
+               <View style = {{paddingHorizontal: 15}}>{leagueData}</View>
+               
            </ScrollView>
        );
 }
