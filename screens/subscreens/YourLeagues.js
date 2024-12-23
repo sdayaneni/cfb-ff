@@ -13,7 +13,6 @@ import { useFocusEffect } from '@react-navigation/native';
 
 export default function YourLeagues () {
 
-    let user = auth.currentUser;
     let itemList;
     let userLeagues = [];
     let leagueIds = [];
@@ -30,12 +29,6 @@ export default function YourLeagues () {
             loadData();
      }}, [isFocused]);
 
-    //  useFocusEffect(
-    //     useCallback(() => {
-    //         getLeagues(); // Reload data when screen comes into focus
-    //     }, [])
-    //   );
-
     const loadData = async () => {
         setLoading(true);
         await getLeagues();
@@ -43,7 +36,6 @@ export default function YourLeagues () {
 
 
     async function getLeagues(){
-        console.log("getting");
         const q = query(collection(db, "leagues"));
         const querySnapshot = await getDocs(q);
         userLeagues = [];
@@ -60,7 +52,7 @@ export default function YourLeagues () {
         const querySnapshot2 = await getDocs(q2);
 
         querySnapshot2.forEach((doc2) => {
-            if(doc2.data().memberId == user.uid) {
+            if(doc2.data().memberId == auth.currentUser.uid) {
                 userLeagues.push(doc.data());
                 leagueIds.push(doc.id)
                 sizes.push(querySnapshot2.size);
@@ -73,38 +65,47 @@ export default function YourLeagues () {
             itemList=userLeagues.map((item,index)=>{
                 return (
                     <LeagueCard key = {index} item = {background} title = {item.name} size = {item.size} 
-                    numJoined = {sizes[index]} width = {400} newMargin = {16} user = {user.uid} 
+                    numJoined = {sizes[index]} width = {400} newMargin = {16} user = {auth.currentUser.uid} 
                     leagueId = {leagueIds[index]} onDelete = {deleteLeague}></LeagueCard>
                 );
             });
         
             setLeagueData(itemList);
             setLoading(false);
-            console.log(loading);
         }
 
         const deleteLeague = async (leagueId) => {
             try {
               // Reference to the event document
-              const leagueDocRef = doc(db, "leagues", leagueId);
-          
-              // Retrieve the event document to get the members and admin
-              const leagueDoc = await getDoc(leagueDocRef);
-          
-              if (leagueDoc.exists()) {
-                const leagueData = leagueDoc.data();
-    
-                // Now delete the event document
-                await deleteDoc(leagueDocRef);
-                loadData();
-          
-                console.log('Event deleted successfully');
-              } else {
-                console.log('Event does not exist');
-              }
+                const leagueDocRef = doc(db, "leagues", leagueId);
+                const subcollections = ["members", "drafted"];
+
+                for (const subcollectionName of subcollections) {
+                    const subcollectionPath = collection(db, "leagues", leagueId, subcollectionName);
+                    const subcollectionDocs = await getDocs(subcollectionPath);
+        
+                    // Delete all documents in the subcollection
+                    for (const subDoc of subcollectionDocs.docs) {
+                        await deleteDoc(subDoc.ref);
+                    }
+                }
+            
+                // Retrieve the event document to get the members and admin
+                const leagueDoc = await getDoc(leagueDocRef);
+            
+                if (leagueDoc.exists()) {
+                    // Now delete the event document
+                    await deleteDoc(leagueDocRef);
+                    loadData();
+                    console.log('Event deleted successfully');
+                } 
+                else {
+                    console.log('Event does not exist');
+                }
+
             } catch (error) {
-              console.error('Error deleting event:', error);
-              throw error;
+                console.error('Error deleting event:', error);
+                throw error;
             }
           };
     

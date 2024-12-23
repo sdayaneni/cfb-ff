@@ -58,7 +58,6 @@ const LeagueCard = ({item, title, size, numJoined, width, newMargin, user, leagu
         return (
           <TouchableHighlight
             onPress={() => {
-                console.log("deleting")
                 if (onDelete) {
                     onDelete(leagueId);
                   }

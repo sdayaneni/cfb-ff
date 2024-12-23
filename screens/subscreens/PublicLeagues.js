@@ -1,7 +1,7 @@
 import React from 'react';
 import LeagueCard from '../../components/LeagueCard';
 import background from "../../assets/background.png";
-import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView, TextInput } from "react-native";
+import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView, RefreshControl, TextInput } from "react-native";
 import {getFirestore, collection, addDoc, doc, setDoc, getDoc, getDocs, deleteDoc, query, orderBy} from 'firebase/firestore';
 import {useState, useEffect} from 'react';
 import {db} from "../../firebase.js"
@@ -12,24 +12,30 @@ import { Ionicons } from "@expo/vector-icons";
 
 export default function PublicLeagues () {
 
-    let user;
     let itemList;
     let userLeagues = [];
     const [leagueData, setLeagueData] = useState([]);
     const isFocused = useIsFocused(); 
     let leagueIds = [];
     const navigation = useNavigation();
-
+    const [loading, setLoading] = useState(true); // State for initial loading and refreshing
+    
     useEffect(() => {
         if(isFocused){ 
-            user = auth.currentUser;
-            getLeagues();
+            loadData();
      }}, [isFocused])
+
+     const loadData = async () => {
+        setLoading(true);
+        await getLeagues();
+      };
 
      async function getLeagues(){
         const q = query(collection(db, "leagues"));
         const querySnapshot = await getDocs(q);
         userLeagues = [];
+        setLeagueData([]);
+        setLoading(true);
 
         querySnapshot.forEach((doc) => {
             checkIfMember(doc);
@@ -43,7 +49,7 @@ export default function PublicLeagues () {
             var toAdd = true;
 
             querySnapshot2.forEach((doc2) => {
-                if((doc2.data().memberId == user.uid) || (querySnapshot2.size == doc.data().turn)) {
+                if((doc2.data().memberId == auth.currentUser.uid) || (querySnapshot2.size == doc.data().turn)) {
                     toAdd = false;
                 }
             });
@@ -68,6 +74,7 @@ export default function PublicLeagues () {
             });
         
             setLeagueData(itemList);
+            setLoading(false);
        }
 
        async function handleJoin(index, num){
@@ -75,7 +82,7 @@ export default function PublicLeagues () {
             let toAddTo = collection(db, "leagues", "" + leagueIds[index], "members");
 
             await addDoc(toAddTo, {
-                memberId: user.uid,
+                memberId: auth.currentUser.uid,
                 wins: 0,
                 qb: "",
                 rb: "",
@@ -87,13 +94,14 @@ export default function PublicLeagues () {
                 bench3: "",
                 userTurn: num,
             });
-
+            
+            getLeagues();
             navigation.navigate("Your Leagues");
        }
 
 
     return(
-        <ScrollView style = {styles.container}>
+        <View style = {styles.container}>
             <View style = {{flexDirection: "row", marginBottom: 20, paddingHorizontal: 10}}>
                 <Text style = {[styles.text]}>Public Leagues</Text>
                     <TouchableOpacity
@@ -110,8 +118,8 @@ export default function PublicLeagues () {
                         />
                     </TouchableOpacity>
                </View>
-            <View style = {{paddingHorizontal: 15}}>{leagueData}</View>
-        </ScrollView>
+            <ScrollView style = {{paddingHorizontal: 15, height: "100%"}} refreshControl={<RefreshControl refreshing={loading} onRefresh={loadData} />}>{leagueData}</ScrollView>
+        </View>
     );
 }
 
@@ -128,14 +136,14 @@ const styles = StyleSheet.create({
         color: "white",
     },
     submitContainer: {
-        backgroundColor: '#0f0f0f',
-        padding: 15,
-        paddingRight: 20,
+        // backgroundColor: '#0f0f0f',
+        // padding: 15,
+        // paddingRight: 20,
         borderRadius: 10,
         alignItems: 'center',
         justifyContent: 'center',
         marginBottom: 18,
-        marginLeft: -60
+        marginLeft: -70
     },
     leagueSection: {
         flexDirection:'row'    }
