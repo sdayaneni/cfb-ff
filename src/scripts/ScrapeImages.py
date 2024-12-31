@@ -3,6 +3,19 @@ from bs4 import BeautifulSoup
 import boto3
 import os
 
+#Get Team Ids
+
+conference_urls = ['https://www.espn.com/college-football/teams/_/group/1', 'https://www.espn.com/college-football/teams/_/group/4', 
+        'https://www.espn.com/college-football/teams/_/group/5', 'https://www.espn.com/college-football/teams/_/group/8']
+
+for url in conference_urls:
+    content = requests.get(url).text
+    soup = BeautifulSoup(content, 'lxml')
+    headlineSection = soup.find('section', class_ = 'col-three')
+    filtered = headlineSection.find('ul', class_='headlineStack__list')
+    headlines = filtered.find_all('li')
+    secondInstance = filtered.text
+
 # URL of the ESPN College Football Standings page
 url = 'https://www.espn.com/college-football/standings'
 
