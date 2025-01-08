@@ -1,18 +1,39 @@
 const express = require('express');
-const cors = require('cors');
-const playerRoutes = require('./routes/playerRoutes');
-
+const AWS = require('aws-sdk');
 const app = express();
-const PORT = process.env.PORT || 3000;
+const port = 3000;
 
-// Middleware
-app.use(cors());
-app.use(express.json());
+// Configure AWS S3
+const s3 = new AWS.S3({
+  region: 'your-region', // e.g., 'us-east-1'
+  accessKeyId: 'your-access-key-id',
+  secretAccessKey: 'your-secret-access-key',
+});
 
-// Routes
-app.use('/players', playerRoutes);
+const BUCKET_NAME = 'sdfnfantasyfootball';
+const FOLDER_NAME = 'school-logos';
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+// API endpoint to list school logos
+app.get('/logos', async (req, res) => {
+  try {
+    const params = {
+      Bucket: BUCKET_NAME,
+      Prefix: `${FOLDER_NAME}/`,
+    };
+
+    const data = await s3.listObjectsV2(params).promise();
+    const logos = data.Contents.map((item) => ({
+      key: item.Key,
+      url: `https://${BUCKET_NAME}.s3.amazonaws.com/${item.Key}`,
+    }));
+
+    res.json(logos);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to retrieve school logos' });
+  }
+});
+
+app.listen(port, () => {
+  console.log(`Server running on http://localhost:${port}`);
 });
