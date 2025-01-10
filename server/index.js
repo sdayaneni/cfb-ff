@@ -3,15 +3,17 @@ const AWS = require('aws-sdk');
 const app = express();
 const port = 3000;
 
-// Configure AWS S3
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
+const AWS = require('aws-sdk');
+
 const s3 = new AWS.S3({
-  region: 'your-region', // e.g., 'us-east-1'
-  accessKeyId: 'your-access-key-id',
-  secretAccessKey: 'your-secret-access-key',
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION,
 });
 
-const BUCKET_NAME = 'sdfnfantasyfootball';
-const FOLDER_NAME = 'school-logos';
+const BUCKET_NAME = process.env.S3_BUCKET_NAME;
+const FOLDER_NAME = process.env.S3_FOLDER_NAME;
 
 // API endpoint to list school logos
 app.get('/logos', async (req, res) => {
