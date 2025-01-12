@@ -1,22 +1,10 @@
-const express = require('express');
-const AWS = require('aws-sdk');
-const app = express();
-const port = 3000;
-
-require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 const AWS = require('aws-sdk');
 
-const s3 = new AWS.S3({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  region: process.env.AWS_REGION,
-});
-
+const s3 = new AWS.S3();
 const BUCKET_NAME = process.env.S3_BUCKET_NAME;
 const FOLDER_NAME = process.env.S3_FOLDER_NAME;
 
-// API endpoint to list school logos
-app.get('/logos', async (req, res) => {
+exports.handler = async (event) => {
   try {
     const params = {
       Bucket: BUCKET_NAME,
@@ -29,13 +17,22 @@ app.get('/logos', async (req, res) => {
       url: `https://${BUCKET_NAME}.s3.amazonaws.com/${item.Key}`,
     }));
 
-    res.json(logos);
+    return {
+      statusCode: 200,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(logos),
+    };
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to retrieve school logos' });
-  }
-});
 
-app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
-});
+    return {
+      statusCode: 500,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ error: 'Failed to retrieve school logos' }),
+    };
+  }
+};
